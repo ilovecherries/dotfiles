@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Bootstrap Label-Input Expand
+# key: bslinput
+# --
+<label for="${1:idName}">$0</label>
+<input name="$1" type="text" class="form-control" id="$1" value=""/>
