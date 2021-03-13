@@ -1,3 +1,14 @@
 #+TITLE: dotfiles
 
 this is where i keep all of my configuration files i suppose
+
+* Emacs
+text editor
+
+* Kitty
+terminal emulator. i kind of want to transition from using kitty but this is
+what i happen to be using ta the moment
+
+* Pulse
+contains settings for my pulse equalizer settings since my headphones do not
+have a lot of bass.
