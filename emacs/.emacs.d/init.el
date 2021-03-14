@@ -4,8 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("cbd8e65d2452dfaed789f79c92d230aa8bdf413601b261dbb1291fb88605110c" "e1498b2416922aa561076edc5c9b0ad7b34d8ff849f335c13364c8f4276904f0" "ed36f8e30f02520ec09be9d74fe2a49f99ce85a3dfdb3a182ccd5f182909f3ab" default))
- '(org-agenda-files '("~/org/school.org")))
+   '("cbd8e65d2452dfaed789f79c92d230aa8bdf413601b261dbb1291fb88605110c" "e1498b2416922aa561076edc5c9b0ad7b34d8ff849f335c13364c8f4276904f0" "ed36f8e30f02520ec09be9d74fe2a49f99ce85a3dfdb3a182ccd5f182909f3ab" default)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -49,10 +48,16 @@
 (setq confirm-kill-processes nil)
 (setq ring-bell-function 'ignore)
 
-(add-to-list 'default-frame-alist '(font . "Droid Sans Mono-13"))
-(set-face-attribute 'default t :font "Droid Sans Mono-13")
-(set-face-attribute 'default nil :font "Droid Sans Mono-13")
-(set-frame-font "Droid Sans Mono-13" nil t)
+(let ((custom-font "Droid Sans Mono-")
+	  (font-size (cond ((= 1366 (display-pixel-width)) "11")
+					   ((= 1920 (display-pixel-width)) "13")
+					   (t "12"))))
+  (print font-size)
+  (let ((font-name (concat custom-font font-size)))
+	(add-to-list 'default-frame-alist (cons 'font "Droid Sans Mono-11"))
+	(set-face-attribute 'default t :font font-name)
+	(set-face-attribute 'default nil :font font-name)
+	(set-frame-font font-name nil t)))
 
 (setq initial-startup-screen nil)
 (setq initial-scratch-message ";; hiya answer owo")
@@ -69,7 +74,6 @@
 			  ("C-c p g" . projectile-grep))
   :config
   (projectile-mode +1)
-  (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
 (use-package evil
@@ -114,7 +118,7 @@
 (use-package selectrum-prescient
   :config
   (selectrum-prescient-mode +1)
-  (prescient-persis-mode +1))
+  (prescient-persist-mode +1))
 (use-package orderless
   :config
   (setq completion-styles '(orderless))

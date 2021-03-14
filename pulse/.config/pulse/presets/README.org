@@ -1,0 +1,14 @@
+#+TITLE: PulseAudio Equalizer Presets
+#+AUTHOR: Cherry
+
+because pulseaudio equalizer sucks, it won't display saved presets in its list for
+some reason even when manually modifying the preset list. so to apply one of the
+equalizer settings, just use `cp` to overwrite the current `equalizerrc` file.
+
+* Steelseries
+these motherfuckers have such overbearing mids and highs, holy shit. they're
+comfy though.
+
+* L440
+this probably looks random, but idk it just sounds good especially since i
+typically have a fan running whenever im using my laptop
