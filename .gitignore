@@ -1,10 +1,10 @@
 # emacs cache and built packages
 emacs/.emacs.d/*
+emacs/.config
 !emacs/emacs.d/init.el
 !emacs/emacs.d/transient
 !emacs/emacs.d/snippets
 
 # pulse audio settings
 pulse/.config/pulse/*
-!pulse/.config/pulse/equalizerrc
 !pulse/.config/pulse/presets
