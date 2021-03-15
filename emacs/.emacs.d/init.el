@@ -4,7 +4,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("cbd8e65d2452dfaed789f79c92d230aa8bdf413601b261dbb1291fb88605110c" "e1498b2416922aa561076edc5c9b0ad7b34d8ff849f335c13364c8f4276904f0" "ed36f8e30f02520ec09be9d74fe2a49f99ce85a3dfdb3a182ccd5f182909f3ab" default)))
+   '("cbd8e65d2452dfaed789f79c92d230aa8bdf413601b261dbb1291fb88605110c" "e1498b2416922aa561076edc5c9b0ad7b34d8ff849f335c13364c8f4276904f0" "ed36f8e30f02520ec09be9d74fe2a49f99ce85a3dfdb3a182ccd5f182909f3ab" default))
+ '(org-agenda-files '("~/School/school.org")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -52,7 +53,6 @@
 	  (font-size (cond ((= 1366 (display-pixel-width)) "11")
 					   ((= 1920 (display-pixel-width)) "13")
 					   (t "12"))))
-  (print font-size)
   (let ((font-name (concat custom-font font-size)))
 	(add-to-list 'default-frame-alist (cons 'font "Droid Sans Mono-11"))
 	(set-face-attribute 'default t :font font-name)
@@ -177,9 +177,9 @@
 (use-package page-break-lines)
 (use-package dashboard
   :custom
-  (dashboard-items '((recents . 10)
-					 (projects . 5)
-					 (agenda . 10)))
+  (dashboard-items '((agenda . 10)
+					 (recents . 5)
+					 (projects . 5)))
   :config
   (setq inhibit-start-message t)
   (dashboard-setup-startup-hook))
@@ -268,9 +268,6 @@
   (setq hover-hot-reload-on-save t
 		hover-clear-buffer-on-hot-restart t))
 (setq exec-path (append exec-path '("/home/cherry/go/bin")))
-
-(global-set-key (kbd "M-o") #'previous-window-any-frame)
-(global-set-key (kbd "C-x M-o") #'next-multiframe-window)
 
 (use-package bison-mode
   :straight (bison-mode :type git :host github :repo "Wilfred/bison-mode"))
