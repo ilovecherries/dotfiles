@@ -54,7 +54,7 @@
 					   ((= 1920 (display-pixel-width)) "13")
 					   (t "12"))))
   (let ((font-name (concat custom-font font-size)))
-	(add-to-list 'default-frame-alist (cons 'font "Droid Sans Mono-11"))
+	(add-to-list 'default-frame-alist (cons 'font font-name))
 	(set-face-attribute 'default t :font font-name)
 	(set-face-attribute 'default nil :font font-name)
 	(set-frame-font font-name nil t)))
@@ -66,6 +66,12 @@
   :config
   (setq kaolin-ocean-alt-bg t)
   (load-theme 'kaolin-ocean t))
+
+(use-package colorless-themes
+  :disabled
+  :config (colorless-themes-load-theme nordless))
+
+;; (load-theme 'whiteboard t)
 
 ;; (load-theme 'leuven t)
 
@@ -134,7 +140,9 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package doom-modeline
-  :config (doom-modeline-mode 1))
+  :config
+  (setq doom-modeline-icon (display-graphic-p))
+  (doom-modeline-mode 1))
 
 (use-package company
   :hook (prog-mode . company-mode)
@@ -271,3 +279,16 @@
 
 (use-package bison-mode
   :straight (bison-mode :type git :host github :repo "Wilfred/bison-mode"))
+
+(use-package lsp-python-ms
+  :after (lsp)
+  :hook (python-mode . lsp-deferred)
+  :custom
+  (lsp-python-auto-install-server t))
+
+(use-package restclient)
+(use-package ob-restclient
+  :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((restclient . t))))
