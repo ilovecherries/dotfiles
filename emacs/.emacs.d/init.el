@@ -76,6 +76,7 @@
 ;; (load-theme 'leuven t)
 
 (use-package projectile
+  :disabled
   :bind (:map projectile-mode-map
 			  ("C-c p g" . projectile-grep))
   :config
@@ -83,6 +84,7 @@
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
 
 (use-package evil
+  :disabled
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -92,6 +94,7 @@
   (evil-mode 1))
 
 (use-package evil-collection
+  :disabled
   :init
   (setq evil-collection-setup-minibuffer t)
   :config
@@ -130,9 +133,6 @@
   (setq completion-styles '(orderless))
   (setq orderless-skip-highlighting (lambda () selectrum-is-active))
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
-(use-package mini-frame
-  :disabled
-  :config (mini-frame-mode +1))
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (use-package rainbow-delimiters
@@ -161,10 +161,6 @@
   :hook (prog-mode . smartparens-mode)
   :config (require 'smartparens-config))
 
-(use-package evil-smartparens
-  :defer t
-  :config (add-hook 'smartparens-enabled-hook #'evil-smart-parens-mode))
-
 (use-package lsp-mode
   :defer t
   :config (setq lsp-enable-on-type-formatting nil))
@@ -175,31 +171,30 @@
 
 (add-hook 'c-mode-common-hook #'lsp)
 
-;; org-mode
-(setq org-adapt-indentation nil)
-
-(add-hook 'org-mode-hook #'org-indent-mode)
-
-(use-package org-plus-contrib)
+(use-package org-plus-contrib
+  :hook (org-mode . (org-indent-mode visual-line-mode))
+  :config
+  (setq org-adapt-indentation nil))
 
 (use-package page-break-lines)
 (use-package dashboard
+  :after (page-break-lines)
   :custom
-  (dashboard-items '((agenda . 10)
-					 (recents . 5)
-					 (projects . 5)))
+  (dashboard-items '((recents . 10)
+					 (agenda . 10)
+					 (bookmarks . 5)))
   :config
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
   (setq inhibit-start-message t)
   (dashboard-setup-startup-hook))
 
 
-;; (use-package dtrt-indent)
-;; (add-hook 'prog-mode-hook #'dtrt-indent-mode)
 (use-package dumb-jump
   :config (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 (use-package simple-httpd
   :config (httpd-start))
+
 (use-package impatient-mode
   :after (simple-httpd))
 
@@ -239,15 +234,19 @@
 	(push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
 	:bind (("C-`" . shell-pop)))
 
- (use-package magit
-	:bind (("C-x g" . magit-status)))
+(use-package magit
+  :bind (("C-x g" . magit-status)))
 
 (use-package nim-mode
-  :hook (nim-mode . nimsuggest-mode))
-(add-hook 'nim-mode-hook 'lsp)
-(add-hook 'nim-mode-hook
-		  (lambda () (run-hooks 'prog-mode-hook)))
-(setq exec-path (append exec-path '("/home/cherry/.nimble/bin")))
+  :hook (nim-mode . nimsuggest-mode)
+  :config
+  (defun my-nim-mode-hook ()
+	(set (make-local-variable 'company-backends)
+		 '((company-nimsuggest company-dabbrev company-capf company-files))))
+  (add-hook 'nim-mode-hook
+			(lambda () (run-hooks 'prog-mode-hook)))
+  (add-hook 'nimsuggest-mode-hook #'my-nim-mode-hook)
+  (setq exec-path (append exec-path '("/home/cherry/.nimble/bin"))))
 
 ;; gdb
 (setq-default gdb-display-io-nopopup t)
@@ -255,12 +254,14 @@
 ;; java
 (use-package lsp-java
   :hook (java-mode . lsp))
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((java . t)))
 (nconc org-babel-default-header-args:java
        '((:dir . nil)
          (:results . value)))
+
 ;; dart mode
 (use-package dart-mode
   :custom
@@ -292,3 +293,30 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((restclient . t))))
+
+(use-package expand-region
+  :bind (("C-=" . #'er/expand-region)))
+
+;; fix behaviour of M-b for better usage
+(defun better-backwards-word ()
+  "Go to the end of the token behind the marker."
+  (interactive)
+  (backward-word 2)
+  (forward-word))
+(global-set-key (kbd "M-b") #'better-backwards-word)
+
+(setq-default fill-column 80)
+
+(use-package visual-fill-column
+  :hook (visual-line-mode . visual-fill-column-mode))
+
+(use-package undo-tree
+  :config (global-undo-tree-mode))
+
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+(setq remote-file-name-inhibit-cache nil)
+(setq vc-ignore-dir-regexp
+      (format "%s\\|%s"
+                    vc-ignore-dir-regexp
+                    tramp-file-name-regexp))
+(setq tramp-verbose 1)
