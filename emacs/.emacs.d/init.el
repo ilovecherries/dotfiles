@@ -45,6 +45,7 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
+
 (setq warning-minimum-level :emergency)
 (setq confirm-kill-processes nil)
 (setq ring-bell-function 'ignore)
@@ -52,7 +53,7 @@
 (let ((custom-font "Droid Sans Mono-")
 	  (font-size (cond ((= 1366 (display-pixel-width)) "11")
 					   ((= 1920 (display-pixel-width)) "13")
-					   (t "12"))))
+					   (t "13"))))
   (let ((font-name (concat custom-font font-size)))
 	(add-to-list 'default-frame-alist (cons 'font font-name))
 	(set-face-attribute 'default t :font font-name)
@@ -67,38 +68,12 @@
   (setq kaolin-ocean-alt-bg t)
   (load-theme 'kaolin-ocean t))
 
-(use-package colorless-themes
-  :disabled
-  :config (colorless-themes-load-theme nordless))
-
-;; (load-theme 'whiteboard t)
-
-;; (load-theme 'leuven t)
-
 (use-package projectile
-  :disabled
   :bind (:map projectile-mode-map
 			  ("C-c p g" . projectile-grep))
   :config
   (projectile-mode +1)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
-
-(use-package evil
-  :disabled
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-i-jump nil)
-  (setq evil-search-module 'evil-search)
-  :config
-  (evil-mode 1))
-
-(use-package evil-collection
-  :disabled
-  :init
-  (setq evil-collection-setup-minibuffer t)
-  :config
-  (evil-collection-init))
 
 (column-number-mode 1)
 
@@ -135,6 +110,7 @@
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
 (use-package rainbow-delimiters
   :defer t
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -151,10 +127,15 @@
   (company-idle-delay 0)
   (company-minimum-prefix-length 1)
   (company-backends '(company-capf))
-  (company-selection-wrap-around t))
+  (company-selection-wrap-around t)
+  (company-show-numbers t))
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
+
+(use-package company-tabnine
+  :config
+  (add-to-list 'company-backends #'company-tabnine))
 
 (use-package smartparens
   :defer t
@@ -171,10 +152,9 @@
 
 (add-hook 'c-mode-common-hook #'lsp)
 
-(use-package org-plus-contrib
-  :hook (org-mode . (org-indent-mode visual-line-mode))
-  :config
-  (setq org-adapt-indentation nil))
+(add-hook 'org-mode-hook #'org-indent-mode)
+(add-hook 'org-mode-hook #'visual-line-mode)
+(setq org-adapt-indentation nil)
 
 (use-package page-break-lines)
 (use-package dashboard
@@ -229,10 +209,10 @@
 			 :test 'equal))
 
 (use-package shell-pop
-	:config
-	;; fixes a bug where frames will swap randomly
-	(push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
-	:bind (("C-`" . shell-pop)))
+  :config
+  ;; fixes a bug where frames will swap randomly
+  (push (cons "\\*shell\\*" display-buffer--same-window-action) display-buffer-alist)
+  :bind (("C-`" . shell-pop)))
 
 (use-package magit
   :bind (("C-x g" . magit-status)))
@@ -241,6 +221,9 @@
   :hook (nim-mode . nimsuggest-mode)
   :config
   (defun my-nim-mode-hook ()
+	(auto-fill-mode 0)
+	(electric-indent-local-mode 0)
+	()
 	(set (make-local-variable 'company-backends)
 		 '((company-nimsuggest company-dabbrev company-capf company-files))))
   (add-hook 'nim-mode-hook
@@ -258,9 +241,6 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((java . t)))
-(nconc org-babel-default-header-args:java
-       '((:dir . nil)
-         (:results . value)))
 
 ;; dart mode
 (use-package dart-mode
@@ -297,17 +277,10 @@
 (use-package expand-region
   :bind (("C-=" . #'er/expand-region)))
 
-;; fix behaviour of M-b for better usage
-(defun better-backwards-word ()
-  "Go to the end of the token behind the marker."
-  (interactive)
-  (backward-word 2)
-  (forward-word))
-(global-set-key (kbd "M-b") #'better-backwards-word)
-
 (setq-default fill-column 80)
 
 (use-package visual-fill-column
+  :disabled
   :hook (visual-line-mode . visual-fill-column-mode))
 
 (use-package undo-tree
@@ -320,3 +293,16 @@
                     vc-ignore-dir-regexp
                     tramp-file-name-regexp))
 (setq tramp-verbose 1)
+
+(save-place-mode 1)
+(use-package sly
+  :config
+  (require 'sly-autoloads)
+  (setq inferior-lisp-program "sbcl"))
+
+(global-set-key (kbd "M-/") #'hippie-expand)
+
+(put 'upcase-region 'disabled nil)
+
+(use-package smilebasic
+  :straight (smilebasic :type git :host github :repo "ansxor/smilebasic-mode"))
